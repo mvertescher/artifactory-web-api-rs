@@ -1,4 +1,4 @@
-//! A simple artifactory client
+//! A simple Artifactory client
 
 use std::io::Write;
 use std::path::Path;
@@ -9,7 +9,7 @@ use serde_derive::*;
 use thiserror::Error;
 use url::Url;
 
-/// An un-authenticated Artifactory client.
+/// An unauthenticated Artifactory client.
 pub struct Client {
     origin: String,
 }
