@@ -2,7 +2,10 @@
 authors = ["Matt Vertescher <mvertescher@gmail.com>"]
 description = "An API client for JFrog Artifactory."
 edition = "2018"
+license = "MIT OR Apache-2.0"
 name = "artifactory-web-api"
+readme = "README.md"
+repository = "https://github.com/mvertescher/artifactory-web-api-rs"
 version = "0.0.0"
 
 [dependencies]
