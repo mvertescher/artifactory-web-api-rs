@@ -58,7 +58,7 @@ impl Client {
         let mut bytes_downloaded = 0;
         while let Some(chunk) = res.chunk().await? {
             bytes_downloaded += chunk.as_ref().len() as u64;
-            dest.write(chunk.as_ref())?;
+            dest.write_all(chunk.as_ref())?;
             let status = DownloadProgress {
                 expected_bytes_downloaded,
                 bytes_downloaded,
