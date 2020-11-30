@@ -1,0 +1,25 @@
+[package]
+authors = ["Matt Vertescher <mvertescher@gmail.com>"]
+description = "An API client for JFrog Artifactory."
+edition = "2018"
+name = "artifactory-web-api"
+version = "0.0.0"
+
+[dependencies]
+chrono = { version = "0.4", features = ["serde"] }
+log = "0.4"
+serde = "1"
+serde_derive = "1"
+thiserror = "1"
+hex = { version = "0.4.2", features = ["serde"] }
+url = { version = "2", features = ["serde"] }
+
+[dependencies.reqwest]
+default_features = false
+features = ["json", "rustls-tls"]
+version = "0.10.8"
+
+# [features]
+# default = ["rustls"]
+# rustls = "reqwest/rustls-tls"
+
