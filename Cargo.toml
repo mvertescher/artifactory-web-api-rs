@@ -20,7 +20,7 @@ url = { version = "2", features = ["serde"] }
 [dependencies.reqwest]
 default-features = false
 features = ["json"]
-version = "0.11.12"
+version = "0.11"
 
 [features]
 default = ["reqwest/rustls-tls"]
