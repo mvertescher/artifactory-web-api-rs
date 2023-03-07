@@ -8,10 +8,14 @@ use chrono::DateTime;
 use serde_derive::*;
 use thiserror::Error;
 use url::Url;
+use reqwest::Method;
+use reqwest::{IntoUrl, RequestBuilder, Response};
+use reqwest::header::{self, HeaderValue};
 
 /// An unauthenticated Artifactory client.
 pub struct Client {
     origin: String,
+    bearer: Option<String>,
 }
 
 impl Client {
@@ -21,7 +25,24 @@ impl Client {
     pub fn new<S: AsRef<str>>(origin: S) -> Self {
         Self {
             origin: origin.as_ref().to_string(),
+            bearer: None,
         }
+    }
+
+    pub fn with_bearer<S: AsRef<str>>(mut self, bearer: S) -> Self {
+        self.bearer = Some(bearer.as_ref().to_string());
+        self
+    }
+
+    async fn request<U: IntoUrl>(&self, method: Method, url: U) -> Result<Response, reqwest::Error> {
+        let mut headers = header::HeaderMap::new();
+        if let Some(bearer) = &self.bearer {
+            let mut s = "Bearer ".to_owned();
+            s.push_str(&bearer);
+            headers.insert("Authorization", HeaderValue::from_str(s.as_ref()).unwrap());
+        }
+        let client = reqwest::ClientBuilder::new();
+        client.default_headers(headers).build().unwrap().request(method, url).send().await
     }
 
     /// Fetch metadata about a remote artifact.
@@ -29,7 +50,7 @@ impl Client {
         let url = format!("{}/artifactory/api/storage/{}", self.origin, path.0);
         let url = Url::parse(&url).unwrap();
 
-        let info: FileInfo = reqwest::get(url).await?.json().await?;
+        let info: FileInfo = self.request(Method::GET, url).await?.json().await?;
 
         Ok(info)
     }
@@ -52,7 +73,7 @@ impl Client {
 
         let mut dest = std::fs::File::create(dest)?;
 
-        let mut res = reqwest::get(url).await?;
+        let mut res = self.request(Method::GET, url).await?;
 
         let expected_bytes_downloaded = res.content_length().unwrap_or(0);
         let mut bytes_downloaded = 0;
